@@ -10,6 +10,7 @@ export function generateRandomJuice(): Juice[] {
     amount: 1,
     ice: false,
     sugar: false,
+    type: flavor
   }));
   return juiceList;
 }

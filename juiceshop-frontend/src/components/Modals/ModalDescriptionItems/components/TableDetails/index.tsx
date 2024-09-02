@@ -68,6 +68,7 @@ export function TableDetails({ next, setValue, disabled }: ComponentProps) {
   useEffect(() => {
     cart.forEach((juice, index) => {
       setValue(`juices[${index}].amount`, juice.amount);
+      setValue(`juices[${index}].type`, juice.id);
       setValue(`juices[${index}].id`, juice.id);
       setValue(`juices[${index}].sugar`, juice.sugar);
       setValue(`juices[${index}].ice`, juice.ice);

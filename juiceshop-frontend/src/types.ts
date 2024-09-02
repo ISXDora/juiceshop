@@ -19,6 +19,7 @@ export interface Juice {
   pickupDate?: string;
   ice?: boolean;
   sugar?: boolean;
+  type: string;
 }
 
 export interface Stock {

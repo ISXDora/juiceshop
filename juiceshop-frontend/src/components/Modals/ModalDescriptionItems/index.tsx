@@ -15,9 +15,10 @@ import { ScheduleDetails } from './components/ScheduleDetails';
 import { Juice } from '../../../types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FinishedSteps } from './components/FinishedSteps';
+import { JuiceRequestDTO, createOrder } from '../../../services/createOrder';
 
 type FormProps = {
-  juices: Juice[];
+  juices: JuiceRequestDTO[];
   addressMachine: number;
   pickupDate: string;
   total: string;
@@ -49,7 +50,7 @@ export function ModalDescriptionItems() {
   const validationSchema = Yup.object().shape({
     juices: Yup.array().of(
       Yup.object().shape({
-        id: Yup.string().required('O ID do suco é obrigatório'),
+        type: Yup.string().required('O ID do suco é obrigatório'),
         amount: Yup.number().required('A quantidade é obrigatória').min(1),
         price: Yup.number().required('O preço é obrigatório').min(0),
         sugar: Yup.boolean().optional(),
@@ -117,6 +118,7 @@ export function ModalDescriptionItems() {
   const validateCurrentStep = useCallback(async () => {
     try {
       const data = getValues();
+      console.log(data, 'data');
       await steps[selected].schema.validate(data, {
         abortEarly: false,
       });
@@ -141,8 +143,21 @@ export function ModalDescriptionItems() {
     }
   }, [selected]);
 
-  const onSubmit: SubmitHandler<FormProps> = data =>
-    console.log(data, 'datasubmit');
+  const onSubmit: SubmitHandler<FormProps> = useCallback(async data => {
+    try {
+      const response = await createOrder({
+        addressMachine: data.addressMachine,
+        juices: data.juices,
+        pickupDate: data.pickupDate,
+        total: data.total,
+      });
+      console.log('Resposta da API:', response?.data);
+    } catch (error) {
+      console.error('Erro ao enviar os dados:', error);
+    }
+  }, []);
+
+  console.log(errors, 'err');
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} control={control} name="form">
