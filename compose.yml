@@ -1,0 +1,48 @@
+services:
+  db:
+    container_name: juiceshop-db-dev
+    image: postgres:12.17
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
+      POSTGRES_DB: juiceshop-db
+    volumes:
+      - db-docker-vol:/var/lib/postgresql/data
+    networks:
+      - juiceshop-net
+  juiceshop-backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    networks:
+      - juiceshop-net
+    environment:
+      PASSWORD_DB: admin
+      USERNAME_DB: postgres
+      database: juiceshop-db
+      HOST_DB: db
+  web:
+    container_name: frontend
+    image: isadoraxavierr/juiceshop-frontend
+    restart: always
+    ports: 
+      - 8080:8080
+    networks:
+      - juiceshop-net
+    environment: 
+      VITE_API_URL: http://localhost:3000
+volumes: 
+  db-docker-vol:
+    name: postgre-db-juiceshop-vol-dev
+networks:
+  juiceshop-net:
+    driver: bridge
